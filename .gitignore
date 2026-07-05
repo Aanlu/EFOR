@@ -1,0 +1,21 @@
+# Binaries and build directories
+build/
+bin/
+obj/
+
+# CMake temporary and cache files
+CMakeCache.txt
+CMakeFiles/
+CMakeCheckOutputs/
+Makefile
+cmake_install.cmake
+
+# Operating System specific files
+.DS_Store
+Thumbs.db
+
+# Editor backups and IDE configurations (Optional)
+*.swp
+*~
+.vscode/
+.idea/
