@@ -18,4 +18,5 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 add_executable(efor 
     src/main.c
     src/core/app_state.c
+    src/platform/windows/fs_reader_win.c
 )
