@@ -15,5 +15,6 @@ typedef enum{
 KeyAction input_get_action(void);
 
 void platform_sleep_ms(unsigned int milliseconds);
+void platform_clear_screen(void);
 
 #endif
