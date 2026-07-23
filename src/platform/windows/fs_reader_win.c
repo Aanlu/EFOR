@@ -57,13 +57,22 @@ int fs_read_directory(const char* path, FSDirectoryContent* content) {
     }
     content -> count = 0;
     do{
-        if (strcmp(fFileData.cFileName, ".") != 0 && strcmp(fFileData.cFileName, "..") != 0 && content->count < MAX_FILES_PER_DIR) {
+        if (strcmp(fFileData.cFileName, ".") == 0 || strcmp(fFileData.cFileName, "..") == 0) {
+            continue;
+        }
+
+        if ((fFileData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) || (fFileData.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) || (fFileData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
+            continue;
+        }
+
+        if (content->count < MAX_FILES_PER_DIR) {
             strncpy(content->items[content->count].name, fFileData.cFileName, MAX_FILENAME_LEN - 1);
-            content->items[content->count].name[MAX_FILENAME_LEN - 1] = '\0'; // Ensure null-termination
+            content->items[content->count].name[MAX_FILENAME_LEN - 1] = '\0';
             content->items[content->count].isDirectory = (fFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? 1 : 0;
             content->items[content->count].size = ((unsigned long long)fFileData.nFileSizeHigh << 32) | fFileData.nFileSizeLow;
             content->count++;
         }
+
     }while (FindNextFile(hFind, &fFileData) && content->count < MAX_FILES_PER_DIR);
 
     FindClose(hFind);
