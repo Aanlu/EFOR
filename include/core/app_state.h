@@ -8,14 +8,16 @@
 
 typedef struct {
     char current_path[MAX_PATH_LENGTH];
+    char target_path[MAX_PATH_LENGTH];
     char language_code[LANG_CODE_LEN];
     unsigned int theme_color;
     int running;
-    int selectedIndex;
     int selectedFileIndex;
     bool modeCommand;
     bool needs_reload;
+    bool needs_sync;
 } AppState;
 
 void init_app_state(AppState* state);
+
 #endif

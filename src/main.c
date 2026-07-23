@@ -12,6 +12,7 @@ int main(void) {
     fs_directory_content_init(&content);
 
     strcpy(state.current_path, "C:\\");
+    strcpy(state.target_path, "C:\\");
 
     if (fs_read_directory(state.current_path, &content) != 0) {
         printf("Failed to read directory: %s\n", state.current_path);
@@ -24,10 +25,7 @@ int main(void) {
         bool needs_redraw = handle_input(&state, &content);
         
         if (needs_redraw) {
-            if (state.needs_reload) {
-                fs_read_directory(state.current_path, &content);
-                state.needs_reload = false;
-            }
+            app_sync_filesystem(&state, &content);
             fs_print_directory_content(&content, state.current_path, state.selectedFileIndex);
         }
 
