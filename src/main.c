@@ -1,28 +1,36 @@
 #include <stdio.h>
 #include <string.h>
-#include "core/app_state.h"
-#include "platform/fs_reader.h"
+#include <stdbool.h>
 
+#include "core/app_controller.h"
 
-int main() {
+int main(void) {
     AppState state;
     FSDirectoryContent content;
+
     init_app_state(&state);
     fs_directory_content_init(&content);
 
     strcpy(state.current_path, "C:\\");
+    strcpy(state.target_path, "C:\\");
 
-    printf("Current Path: %s\n", state.current_path);
-    printf("Language Code: %s\n", state.language_code);
-    printf("Theme Color: #%06X\n", state.theme_color);
-    printf("Running: %d\n", state.running);
-
-    if (fs_read_directory(state.current_path, &content) == 0) {
-        fs_print_directory_content(&content, state.current_path);
-    } else {
+    if (fs_read_directory(state.current_path, &content) != 0) {
         printf("Failed to read directory: %s\n", state.current_path);
+        return -1;
+    }
+
+    fs_print_directory_content(&content, state.current_path, state.selectedFileIndex);
+
+    while (state.running) {
+        bool needs_redraw = handle_input(&state, &content);
+        
+        if (needs_redraw) {
+            app_sync_filesystem(&state, &content);
+            fs_print_directory_content(&content, state.current_path, state.selectedFileIndex);
+        }
+
+        platform_sleep_ms(20);
     }
 
     return 0;
 }
-
