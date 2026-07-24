@@ -3,6 +3,8 @@
 #include <stdbool.h>
 
 #include "core/app_controller.h"
+#include "platform/input.h"
+
 
 int main(void) {
     AppState state;
@@ -10,6 +12,7 @@ int main(void) {
 
     init_app_state(&state);
     fs_directory_content_init(&content);
+    platform_input_init();
 
     strcpy(state.current_path, "C:\\");
     strcpy(state.target_path, "C:\\");
@@ -29,8 +32,9 @@ int main(void) {
             fs_print_directory_content(&content, state.current_path, state.selectedFileIndex);
         }
 
-        platform_sleep_ms(20);
+        platform_sleep_ms(5);
     }
 
+    platform_input_shutdown();
     return 0;
 }
