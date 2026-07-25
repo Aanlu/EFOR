@@ -44,7 +44,7 @@ bool handle_input(AppState* state, const FSDirectoryContent* content) {
             return true;
 
         case KEY_ACTION_ENTER:
-            if (state->modeCommand) {
+            if (state->current_mode == STATE_COMMAND_INPUT) {
                 return false;
             }
             navigate_into_dir(state, content);
