@@ -7,18 +7,29 @@
 static void navigate_into_dir(AppState* state, const FSDirectoryContent* content);
 static void navigate_back_dir(AppState* state);
 
+static bool handle_navigation_input(AppState* state, const FSDirectoryContent* content, InputEvent event);
+static bool handle_command_input(AppState* state, InputEvent event);
+
 bool handle_input(AppState* state, const FSDirectoryContent* content) {
     if (!state || !content) return false;
 
-    KeyAction action = input_get_action();
+    InputEvent event = input_get_action();
+    if (event.action == KEY_ACTION_NONE) return false;
 
-    if (action == KEY_ACTION_NONE) {
-        return false;
+    switch(state->current_mode){
+        case STATE_NAVIGATION:
+            return handle_navigation_input(state, content, event);
+        case STATE_COMMAND_INPUT:
+            return handle_command_input(state, event);
+        default:
+            return false;
     }
+}
 
+static bool handle_navigation_input(AppState* state, const FSDirectoryContent* content, InputEvent event){
     int max_file_index = (content->count > 0) ? (int)content->count - 1 : 0;
 
-    switch (action) {
+    switch (event.action) {
         case KEY_ACTION_UP:
             if (state->selectedFileIndex > 0) {
                 state->selectedFileIndex--;
@@ -35,20 +46,14 @@ bool handle_input(AppState* state, const FSDirectoryContent* content) {
 
         case KEY_ACTION_LEFT:
             navigate_back_dir(state);
-            state->needs_reload = true;
             return true;
 
         case KEY_ACTION_RIGHT:
             navigate_into_dir(state, content);
-            state->needs_reload = true;
             return true;
 
         case KEY_ACTION_ENTER:
-            if (state->current_mode == STATE_COMMAND_INPUT) {
-                return false;
-            }
             navigate_into_dir(state, content);
-            state->needs_reload = true;
             return true;
 
         case KEY_ACTION_ESCAPE:
@@ -56,8 +61,56 @@ bool handle_input(AppState* state, const FSDirectoryContent* content) {
             state->running = 0;
             return true;
 
+        case KEY_ACTION_TEXT:
+            if (event.character == ':' && state->buffer_len == 0){
+                app_state_set_mode(state, STATE_COMMAND_INPUT);
+                state->command_buffer[0] = ':';
+                state->command_buffer[1] = '\0';
+                state->buffer_len = 1;
+                return true;
+            }
+
+            return false;
         default:
             return false;
+    }
+}
+
+static bool handle_command_input(AppState* state, InputEvent event){
+    if (!state) return false;
+
+    switch(event.action){
+        case KEY_ACTION_ESCAPE:
+            app_state_set_mode(state, STATE_NAVIGATION);
+            return true;
+        
+        case KEY_ACTION_BACKSPACE:
+            if (state->buffer_len > 1){
+                state->buffer_len--;
+                state->command_buffer[state->buffer_len] = '\0';
+                return true;
+            }else if (state->buffer_len == 1){
+                app_state_set_mode(state, STATE_NAVIGATION);
+                return true;
+            }
+        return false;
+        
+        case KEY_ACTION_TEXT:
+            if (state->buffer_len < 254){
+                state->command_buffer[state->buffer_len] = event.character;
+                state->buffer_len++;
+                state->command_buffer[state->buffer_len] = '\0';
+                return true;
+            }
+            return false;
+        
+        case KEY_ACTION_ENTER:
+            app_state_set_mode(state, STATE_NAVIGATION);
+        return true;
+
+        default:
+            return false;
+            
     }
 }
 
@@ -72,11 +125,11 @@ void app_sync_filesystem(AppState* state, FSDirectoryContent* content){
             strncpy(state->target_path, state->current_path, MAX_PATH_LENGTH);
             fs_read_directory(state->current_path, content);
         }
-        state->needs_sync =false;
+        state->needs_sync = false;
     }else if (state->needs_reload){
         fs_read_directory(state->current_path, content);
-        state->needs_reload = false;
     }
+    state->needs_reload = false;
 }
 
 void navigate_into_dir(AppState* state, const FSDirectoryContent* content) {

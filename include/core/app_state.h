@@ -8,7 +8,7 @@
 #define LANG_CODE_LEN 3
 
 typedef enum {
-    STATE_NAVIGATOR,
+    STATE_NAVIGATION,
     STATE_COMMAND_INPUT,
     STATE_CONFIRMATION,
     STATE_PROCESSING,
@@ -26,7 +26,7 @@ typedef struct {
     bool needs_sync;
 
     AppStateMode current_mode;
-    char command_bufer[256];
+    char command_buffer[256];
     size_t buffer_len;
 } AppState;
 

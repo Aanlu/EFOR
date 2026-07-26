@@ -12,8 +12,8 @@ void init_app_state(AppState* state) {
     state->selectedFileIndex = 0;
     state->needs_reload = false;
     state->needs_sync = false;
-    state->current_mode = STATE_NAVIGATOR;
-    memset(state->command_bufer, 0, sizeof(state->command_bufer));
+    state->current_mode = STATE_NAVIGATION;
+    memset(state->command_buffer, 0, sizeof(state->command_buffer));
     state->buffer_len = 0;
 }
 
@@ -21,9 +21,9 @@ void app_state_set_mode(AppState* state, AppStateMode new_mode){
 
     if (!state) return;
 
-    if (new_mode == STATE_COMMAND_INPUT || new_mode == STATE_NAVIGATOR){
+    if (new_mode == STATE_COMMAND_INPUT || new_mode == STATE_NAVIGATION){
         state->buffer_len = 0;
-        memset(state->command_bufer, 0, sizeof(state->command_bufer));
+        memset(state->command_buffer, 0, sizeof(state->command_buffer));
     }
 
     state->current_mode = new_mode;

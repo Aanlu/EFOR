@@ -10,7 +10,7 @@ void fs_directory_content_init(FSDirectoryContent* content) {
 
     content->count = 0;
 }
-void fs_print_directory_content(const FSDirectoryContent* content, const char* current_path, int selected_index) {
+void fs_print_directory_content(AppState* state, const FSDirectoryContent* content, const char* current_path, int selected_index) {
     if (!content || !current_path) return;
 
     platform_clear_screen();
@@ -40,6 +40,16 @@ void fs_print_directory_content(const FSDirectoryContent* content, const char* c
 
     printf("\n--------------------------------------------------\n");
     printf(" Usa W/S o Flechas para moverte | ESC para salir\n");
+
+    printf("==================================================\n");
+
+    if (state->current_mode == STATE_COMMAND_INPUT) {
+        printf("%s", state->command_buffer);
+    } else {
+        printf("Presiona ':' para ingresar un comando.");
+    }
+    
+    fflush(stdout);
 }
 
 

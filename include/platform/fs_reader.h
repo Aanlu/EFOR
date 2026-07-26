@@ -2,6 +2,7 @@
 #define FS_READER_H
 
 #include <stddef.h>
+#include "core/app_state.h"
 
 #define MAX_FILENAME_LEN 256
 #define MAX_PATH_LEN 4096
@@ -20,6 +21,6 @@ typedef struct {
 
 void fs_directory_content_init(FSDirectoryContent* content);
 int fs_read_directory(const char* path, FSDirectoryContent* content);
-void fs_print_directory_content(const FSDirectoryContent* content, const char* current_path, int selected_index);
+void fs_print_directory_content(AppState* state, const FSDirectoryContent* content, const char* current_path, int selected_index);
 
 #endif
