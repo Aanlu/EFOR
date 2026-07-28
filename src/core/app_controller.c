@@ -1,8 +1,9 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "core/app_controller.h"
+#include "parsers/command_parser.h"
+#include "core/command_executor.h"
 
 static void navigate_into_dir(AppState* state, const FSDirectoryContent* content);
 static void navigate_back_dir(AppState* state);
@@ -104,10 +105,12 @@ static bool handle_command_input(AppState* state, InputEvent event){
             }
             return false;
         
-        case KEY_ACTION_ENTER:
+        case KEY_ACTION_ENTER:{
+            ParsedCommand lineCommand = command_parser(state->command_buffer, state->buffer_len);
+            execute_command(state, &lineCommand);
             app_state_set_mode(state, STATE_NAVIGATION);
         return true;
-
+        }
         default:
             return false;
             

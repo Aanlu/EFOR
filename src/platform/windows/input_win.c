@@ -40,7 +40,9 @@ InputEvent input_get_action(void) {
 
         bool isControl = ((controlState & LEFT_CTRL_PRESSED) || (controlState & RIGHT_CTRL_PRESSED));
 
-        if (isControl) {
+        bool isAltGr = (controlState & LEFT_CTRL_PRESSED) && (controlState & RIGHT_ALT_PRESSED);
+
+        if (isControl && !isAltGr) {
             switch (vkCode) {
                 case 'C':
                     return (InputEvent){ .action = KEY_ACTION_COPY, .character = '\0' };
