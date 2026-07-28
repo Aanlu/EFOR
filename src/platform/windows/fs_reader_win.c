@@ -10,38 +10,56 @@ void fs_directory_content_init(FSDirectoryContent* content) {
 
     content->count = 0;
 }
+static void format_file_size(unsigned long long bytes, bool is_dir, char* out_str, size_t out_size) {
+    if (is_dir) {
+        snprintf(out_str, out_size, "<DIR>");
+        return;
+    }
+
+    if (bytes >= 1048576) {
+        snprintf(out_str, out_size, "%.2f MB", (double)bytes / 1048576.0);
+    } else if (bytes >= 1024) {
+        snprintf(out_str, out_size, "%.2f KB", (double)bytes / 1024.0);
+    } else {
+        snprintf(out_str, out_size, "%llu B", bytes);
+    }
+}
+
 void fs_print_directory_content(AppState* state, const FSDirectoryContent* content, const char* current_path, int selected_index) {
     if (!content || !current_path) return;
 
     platform_clear_screen();
 
-    printf("==================================================\n");
+    printf("==============================================================\n");
     printf(" RUTA ACTUAL: %s\n", current_path);
-    printf("==================================================\n\n");
+    printf("==============================================================\n\n");
 
     if (content->count == 0) {
-        printf("  (Directorio vacio)\n");
-        return;
-    }
-
-    for (size_t i = 0; i < content->count; i++) {
-    if (selected_index >= 0 && i == (size_t)selected_index) {
-        printf(" -> ");
+        printf("  (Directorio vacio)\n\n");
     } else {
-        printf("    ");
+        for (size_t i = 0; i < content->count; i++) {
+            if (selected_index >= 0 && i == (size_t)selected_index) {
+                printf(" -> ");
+            } else {
+                printf("    ");
+            }
+
+            char size_str[16];
+            format_file_size(content->items[i].size, content->items[i].isDirectory, size_str, sizeof(size_str));
+
+            if (content->items[i].isDirectory) {
+                char dir_name[MAX_FILENAME_LEN + 2];
+                snprintf(dir_name, sizeof(dir_name), "[%s]", content->items[i].name);
+                printf("%-35s %12s\n", dir_name, size_str);
+            } else {
+                printf("%-35s %12s\n", content->items[i].name, size_str);
+            }
+        }
     }
 
-    if (content->items[i].isDirectory) {
-        printf("[%s]\n", content->items[i].name);
-    } else {
-        printf(" %s\n", content->items[i].name);
-    }
-}
-
-    printf("\n--------------------------------------------------\n");
+    printf("\n--------------------------------------------------------------\n");
     printf(" Usa W/S o Flechas para moverte | ESC para salir\n");
-
-    printf("==================================================\n");
+    printf("==============================================================\n");
 
     if (state->current_mode == STATE_COMMAND_INPUT) {
         printf("%s", state->command_buffer);
