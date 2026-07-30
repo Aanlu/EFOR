@@ -5,7 +5,7 @@
 #include <stddef.h>
 
 #define MAX_PATH_LENGTH 4096
-#define LANG_CODE_LEN 3
+#define MAX_BUFFER_LEN 256
 
 typedef enum {
     STATE_NAVIGATION,
@@ -18,16 +18,18 @@ typedef enum {
 typedef struct {
     char current_path[MAX_PATH_LENGTH];
     char target_path[MAX_PATH_LENGTH];
-    char language_code[LANG_CODE_LEN];
+    char language_code[8];
     unsigned int theme_color;
     int running;
     int selectedFileIndex;
     bool needs_reload;
     bool needs_sync;
-
+    
     AppStateMode current_mode;
-    char command_buffer[256];
+    char command_buffer[MAX_BUFFER_LEN];
     size_t buffer_len;
+
+    char pending_cmd[MAX_BUFFER_LEN];
 } AppState;
 
 void init_app_state(AppState* state);

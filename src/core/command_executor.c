@@ -1,11 +1,9 @@
 #include "core/command_executor.h"
 #include "fs/fs.h"
 #include "platform/fs_reader.h"
-#include "platform/input.h"
 
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 
 static void build_full_path(char* dest, size_t dest_size, const char* current_path, const char* arg) {
     if (!dest || dest_size == 0 || !current_path || !arg) return;
@@ -21,34 +19,6 @@ static void build_full_path(char* dest, size_t dest_size, const char* current_pa
 
 void execute_command(AppState* state, const ParsedCommand* cmd) {
     if (!state || !cmd || cmd->args[1][0] == '\0') return;
-
-    if (cmd->is_destructive) {
-        printf("\n [ALERTA] ¿Estas seguro de aplicar este cambio? (y/n): ");
-        fflush(stdout);
-
-        bool confirmed = false;
-        while (true) {
-            InputEvent ev = input_get_action();
-            
-            if (ev.action == KEY_ACTION_TEXT) {
-                char c = (char)tolower((unsigned char)ev.character);
-                if (c == 'y') {
-                    confirmed = true;
-                    break;
-                } else if (c == 'n') {
-                    break;
-                }
-            } else if (ev.action == KEY_ACTION_ESCAPE) {
-                break;
-            }
-            
-            platform_sleep_ms(10);
-        }
-
-        if (!confirmed) {
-            return;
-        }
-    }
 
     char full_path[MAX_PATH_LENGTH];
 
