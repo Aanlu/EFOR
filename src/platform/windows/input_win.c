@@ -19,12 +19,12 @@ void platform_input_shutdown(void) {
     SetConsoleMode(hInput, originalConsoleMode);
 }
 
-KeyAction input_get_action(void) {
+InputEvent input_get_action(void) {
     DWORD eventsWaiting = 0;
     GetNumberOfConsoleInputEvents(hInput, &eventsWaiting);
 
     if (eventsWaiting == 0) {
-        return KEY_ACTION_NONE;
+        return (InputEvent){ .action = KEY_ACTION_NONE, .character = '\0' };
     }
 
     INPUT_RECORD inputRecord;
@@ -40,33 +40,32 @@ KeyAction input_get_action(void) {
 
         bool isControl = ((controlState & LEFT_CTRL_PRESSED) || (controlState & RIGHT_CTRL_PRESSED));
 
-        if (isControl) {
+        bool isAltGr = (controlState & LEFT_CTRL_PRESSED) && (controlState & RIGHT_ALT_PRESSED);
+
+        if (isControl && !isAltGr) {
             switch (vkCode) {
-                case 'C': return KEY_ACTION_COPY;
+                case 'C':
+                    return (InputEvent){ .action = KEY_ACTION_COPY, .character = '\0' };
             }
-            return KEY_ACTION_NONE;
+            return (InputEvent){ .action = KEY_ACTION_NONE, .character = '\0' };
         }
 
         switch (vkCode) {
-            case VK_UP:      return KEY_ACTION_UP;
-            case VK_DOWN:    return KEY_ACTION_DOWN;
-            case VK_LEFT:    return KEY_ACTION_LEFT;
-            case VK_RIGHT:   return KEY_ACTION_RIGHT;
-            case VK_RETURN:  return KEY_ACTION_ENTER;
-            case VK_BACK:    return KEY_ACTION_LEFT;
-            case VK_ESCAPE:  return KEY_ACTION_ESCAPE;
+            case VK_UP:     return (InputEvent){ .action = KEY_ACTION_UP,        .character = '\0' };
+            case VK_DOWN:   return (InputEvent){ .action = KEY_ACTION_DOWN,      .character = '\0' };
+            case VK_LEFT:   return (InputEvent){ .action = KEY_ACTION_LEFT,      .character = '\0' };
+            case VK_RIGHT:  return (InputEvent){ .action = KEY_ACTION_RIGHT,     .character = '\0' };
+            case VK_RETURN: return (InputEvent){ .action = KEY_ACTION_ENTER,     .character = '\0' };
+            case VK_ESCAPE: return (InputEvent){ .action = KEY_ACTION_ESCAPE,    .character = '\0' };
+            case VK_BACK:   return (InputEvent){ .action = KEY_ACTION_BACKSPACE, .character = '\0' };
         }
 
-        switch (asciiChar) {
-            case 'w': case 'W': return KEY_ACTION_UP;
-            case 's': case 'S': return KEY_ACTION_DOWN;
-            case 'a': case 'A': return KEY_ACTION_LEFT;
-            case 'd': case 'D': return KEY_ACTION_RIGHT;
-            case 'q': case 'Q': return KEY_ACTION_ESCAPE;
+        if (asciiChar >= 32 && asciiChar <= 126) {
+            return (InputEvent){ .action = KEY_ACTION_TEXT, .character = asciiChar };
         }
     }
-    
-    return KEY_ACTION_NONE;
+
+    return (InputEvent){ .action = KEY_ACTION_NONE, .character = '\0' };
 }
 
 void platform_sleep_ms(unsigned int milliseconds) {

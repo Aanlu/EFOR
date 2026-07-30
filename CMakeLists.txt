@@ -21,5 +21,7 @@ add_executable(efor
     src/platform/windows/fs_reader_win.c
     src/platform/windows/input_win.c
     src/core/app_controller.c
-    
+    src/parsers/command_parser.c
+    src/core/command_executor.c
+    src/platform/windows/fs_win.c
 )

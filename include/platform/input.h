@@ -10,10 +10,16 @@ typedef enum{
     KEY_ACTION_RIGHT,
     KEY_ACTION_ENTER,
     KEY_ACTION_ESCAPE, 
-    KEY_ACTION_COPY
+    KEY_ACTION_COPY,
+    KEY_ACTION_TEXT,
+    KEY_ACTION_BACKSPACE
 } KeyAction;
+typedef struct{
+    KeyAction action;
+    char character;
+}InputEvent;
 
-KeyAction input_get_action(void);
+InputEvent input_get_action(void);
 
 void platform_sleep_ms(unsigned int milliseconds);
 void platform_clear_screen(void);
