@@ -2,7 +2,9 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "core/app_state.h"
 #include "core/app_controller.h"
+#include "platform/fs_reader.h"
 #include "platform/input.h"
 
 

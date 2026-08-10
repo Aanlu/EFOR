@@ -1,11 +1,11 @@
-#ifndef APP_STATE_H
-#define APP_STATE_H
+#pragma once
 
 #include <stdbool.h>
 #include <stddef.h>
 
 #define MAX_PATH_LENGTH 4096
 #define MAX_BUFFER_LEN 256
+
 
 typedef enum {
     STATE_NAVIGATION,
@@ -15,7 +15,7 @@ typedef enum {
     STATE_EXITING
 } AppStateMode;
 
-typedef struct {
+typedef struct AppState{
     char current_path[MAX_PATH_LENGTH];
     char target_path[MAX_PATH_LENGTH];
     char language_code[8];
@@ -34,5 +34,3 @@ typedef struct {
 
 void init_app_state(AppState* state);
 void app_state_set_mode(AppState* state, AppStateMode new_mode);
-
-#endif

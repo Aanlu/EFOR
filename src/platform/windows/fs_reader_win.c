@@ -4,6 +4,7 @@
 
 #include "platform/fs_reader.h"
 #include "platform/input.h"
+#include "core/app_state.h"
 
 void fs_directory_content_init(FSDirectoryContent* content) {
     if (!content) return;

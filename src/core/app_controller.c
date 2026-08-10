@@ -2,7 +2,10 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "core/app_state.h"
+#include "platform/fs_reader.h"
 #include "core/app_controller.h"
+#include "platform/input.h"
 #include "parsers/command_parser.h"
 #include "core/command_executor.h"
 
