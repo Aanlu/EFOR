@@ -60,15 +60,13 @@ void execute_command(AppState* state, const ParsedCommand* cmd) {
 
         case CMD_TYPE_CD:
             if (cmd->args[1][1] == ':' || cmd->args[1][0] == '\\' || cmd->args[1][0] == '/') {
-                strncpy(full_path, cmd->args[1], sizeof(full_path) - 1);
-                full_path[sizeof(full_path) - 1] = '\0';
+                snprintf(full_path, sizeof(full_path), "%s", cmd->args[1]);
             } else {
                 build_full_path(full_path, sizeof(full_path), state->current_path, cmd->args[1]);
             }
 
             if (fs_is_directory(full_path)) {
-                strncpy(state->target_path, full_path, sizeof(state->target_path) - 1);
-                state->target_path[sizeof(state->target_path) - 1] = '\0';
+                snprintf(state->target_path, sizeof(state->target_path), "%s", full_path);
                 state->needs_sync = true;
             }
             break;

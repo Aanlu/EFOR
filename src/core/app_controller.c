@@ -123,8 +123,7 @@ static bool handle_command_input(AppState* state, InputEvent event) {
             ParsedCommand lineCommand = command_parser(state->command_buffer, state->buffer_len);
 
             if (lineCommand.is_destructive) {
-                strncpy(state->pending_cmd, state->command_buffer, sizeof(state->pending_cmd) - 1);
-                state->pending_cmd[sizeof(state->pending_cmd) - 1] = '\0';
+                snprintf(state->pending_cmd, sizeof(state->pending_cmd), "%s", state->command_buffer);
                 app_state_set_mode(state, STATE_CONFIRMATION);
             } else {
                 app_state_set_mode(state, STATE_PROCESSING);
@@ -170,10 +169,10 @@ void app_sync_filesystem(AppState* state, FSDirectoryContent* content) {
 
     if (state->needs_sync) {
         if (fs_read_directory(state->target_path, content) == 0) {
-            strncpy(state->current_path, state->target_path, MAX_PATH_LENGTH);
+            snprintf(state->current_path, sizeof(state->current_path), "%s", state->target_path);
             state->selectedFileIndex = 0;
         } else {
-            strncpy(state->target_path, state->current_path, MAX_PATH_LENGTH);
+            snprintf(state->target_path, sizeof(state->target_path), "%s", state->current_path);
             fs_read_directory(state->current_path, content);
         }
         state->needs_sync = false;
@@ -201,8 +200,7 @@ void navigate_into_dir(AppState* state, const FSDirectoryContent* content) {
             snprintf(new_path, sizeof(new_path), "%s%s", state->current_path, selectedItem->name);
         }
 
-        strncpy(state->target_path, new_path, MAX_PATH_LENGTH - 1);
-        state->target_path[MAX_PATH_LENGTH - 1] = '\0';
+        snprintf(state->target_path, sizeof(state->target_path), "%s", new_path);
 
         state->selectedFileIndex = 0;
         state->needs_sync = true;
@@ -212,7 +210,7 @@ void navigate_into_dir(AppState* state, const FSDirectoryContent* content) {
 void navigate_back_dir(AppState* state) {
     if (!state) return;
 
-    strncpy(state->target_path, state->current_path, MAX_PATH_LENGTH);
+    snprintf(state->target_path, sizeof(state->target_path), "%s", state->current_path);
 
     char* last_backslash = strrchr(state->target_path, '\\');
 
