@@ -3,8 +3,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#define MAX_PATH_LENGTH 4096
-#define MAX_BUFFER_LEN 256
+#include "core/constants.h"
 
 
 typedef enum {
@@ -26,10 +25,10 @@ typedef struct AppState{
     bool needs_sync;
     
     AppStateMode current_mode;
-    char command_buffer[MAX_BUFFER_LEN];
+    char command_buffer[MAX_BUFFER_LENGTH];
     size_t buffer_len;
 
-    char pending_cmd[MAX_BUFFER_LEN];
+    char pending_cmd[MAX_BUFFER_LENGTH];
 } AppState;
 
 void init_app_state(AppState* state);

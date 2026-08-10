@@ -2,14 +2,12 @@
 
 #include <stddef.h>
 
-#define MAX_FILENAME_LEN 256
-#define MAX_PATH_LEN 4096
-#define MAX_FILES_PER_DIR 1024
+#include "core/constants.h"
 
 typedef struct AppState AppState;
 
 typedef struct FileInfo {
-    char name[MAX_FILENAME_LEN];
+    char name[MAX_FILENAME_LENGTH];
     int isDirectory;
     unsigned long long size;
 } FileInfo;

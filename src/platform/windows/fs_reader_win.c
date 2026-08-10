@@ -49,7 +49,7 @@ void fs_print_directory_content(AppState* state, const FSDirectoryContent* conte
             format_file_size(content->items[i].size, content->items[i].isDirectory, size_str, sizeof(size_str));
 
             if (content->items[i].isDirectory) {
-                char dir_name[MAX_FILENAME_LEN + 2];
+                char dir_name[MAX_FILENAME_LENGTH + 2];
                 snprintf(dir_name, sizeof(dir_name), "[%s]", content->items[i].name);
                 printf("%-35s %12s\n", dir_name, size_str);
             } else {
@@ -77,7 +77,7 @@ int fs_read_directory(const char* path, FSDirectoryContent* content) {
 
     WIN32_FIND_DATA fFileData;
 
-    char search_path[MAX_PATH_LEN];
+    char search_path[MAX_PATH_LENGTH];
     snprintf(search_path, sizeof(search_path), "%s\\*", path);
 
     HANDLE hFind = FindFirstFile(search_path, &fFileData);
@@ -95,8 +95,8 @@ int fs_read_directory(const char* path, FSDirectoryContent* content) {
         }
 
         if (content->count < MAX_FILES_PER_DIR) {
-            strncpy(content->items[content->count].name, fFileData.cFileName, MAX_FILENAME_LEN - 1);
-            content->items[content->count].name[MAX_FILENAME_LEN - 1] = '\0';
+            strncpy(content->items[content->count].name, fFileData.cFileName, MAX_FILENAME_LENGTH - 1);
+            content->items[content->count].name[MAX_FILENAME_LENGTH - 1] = '\0';
             content->items[content->count].isDirectory = (fFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? 1 : 0;
             content->items[content->count].size = ((unsigned long long)fFileData.nFileSizeHigh << 32) | fFileData.nFileSizeLow;
             content->count++;
