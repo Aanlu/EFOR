@@ -19,6 +19,7 @@ set(CORE_SOURCES
     src/core/app_state.c
     src/core/app_controller.c
     src/core/command_executor.c
+    src/core/path_utils.c
     src/parsers/command_parser.c
 )
 
@@ -33,3 +34,10 @@ else()
 endif()
 
 add_executable(efor ${CORE_SOURCES} ${PLATFORM_SOURCES})
+
+enable_testing()
+
+add_executable(efor_tests tests/test_paths.c src/core/path_utils.c)
+target_include_directories(efor_tests PRIVATE include)
+
+add_test(NAME PathUtilsTest COMMAND $<TARGET_FILE:efor_tests>)

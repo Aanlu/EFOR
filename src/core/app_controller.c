@@ -8,6 +8,7 @@
 #include "core/interfaces/input.h"
 #include "parsers/command_parser.h"
 #include "core/command_executor.h"
+#include "core/path_utils.h"
 
 static void navigate_into_dir(AppState* state, const FSDirectoryContent* content);
 static void navigate_back_dir(AppState* state);
@@ -210,23 +211,8 @@ void navigate_into_dir(AppState* state, const FSDirectoryContent* content) {
 void navigate_back_dir(AppState* state) {
     if (!state) return;
 
-    snprintf(state->target_path, sizeof(state->target_path), "%s", state->current_path);
-
-    char* last_backslash = strrchr(state->target_path, '\\');
-
-    if (last_backslash) {
-        size_t index = last_backslash - state->target_path;
-
-        if (index == 2 && *(last_backslash + 1) == '\0') {
-            return;
-        }
-
-        if (index == 2) {
-            *(last_backslash + 1) = '\0';
-            state->needs_sync = true;
-        } else if (index > 2) {
-            *last_backslash = '\0';
-            state->needs_sync = true;
-        }
+    if (navigate_path_back(state->current_path)) {
+        snprintf(state->target_path, sizeof(state->target_path), "%s", state->current_path);
+        state->needs_sync = true;
     }
 }
