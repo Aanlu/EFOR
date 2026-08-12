@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "platform/input.h"
+#include "core/interfaces/input.h"
 
 static HANDLE hInput;
 static DWORD originalConsoleMode;

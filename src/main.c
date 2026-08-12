@@ -4,8 +4,8 @@
 
 #include "core/app_state.h"
 #include "core/app_controller.h"
-#include "platform/fs_reader.h"
-#include "platform/input.h"
+#include "core/interfaces/fs_reader.h"
+#include "core/interfaces/input.h"
 
 
 int main(void) {

@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "platform/fs_reader.h"
-#include "platform/input.h"
+#include "core/interfaces/fs_reader.h"
+#include "core/interfaces/input.h"
 #include "core/app_state.h"
 
 void fs_directory_content_init(FSDirectoryContent* content) {

@@ -3,8 +3,8 @@
 
 #include "core/app_state.h"
 #include "core/command_executor.h"
-#include "fs/fs.h"
-#include "platform/fs_reader.h"
+#include "core/interfaces/fs.h"
+#include "core/interfaces/fs_reader.h"
 
 static void build_full_path(char* dest, size_t dest_size, const char* current_path, const char* arg) {
     if (!dest || dest_size == 0 || !current_path || !arg) return;
