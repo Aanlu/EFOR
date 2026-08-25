@@ -62,9 +62,6 @@ InputEvent input_get_action(void) {
     }
 }
 
-void platform_sleep_ms(unsigned int milliseconds) {
-    Sleep(milliseconds);
-}
 
 void platform_clear_screen(void) {
     printf("\033[2J\033[3J\033[H");

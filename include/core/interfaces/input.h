@@ -20,7 +20,6 @@ typedef struct InputEvent{
 
 InputEvent input_get_action(void);
 
-void platform_sleep_ms(unsigned int milliseconds);
 void platform_clear_screen(void);
 void platform_input_init(void);
 void platform_input_shutdown(void);
