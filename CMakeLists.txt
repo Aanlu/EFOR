@@ -39,5 +39,8 @@ enable_testing()
 
 add_executable(efor_tests tests/test_paths.c src/core/path_utils.c)
 target_include_directories(efor_tests PRIVATE include)
-
 add_test(NAME PathUtilsTest COMMAND $<TARGET_FILE:efor_tests>)
+
+add_executable(efor_logger_tests tests/test_logger.c src/core/logger.c)
+target_include_directories(efor_logger_tests PRIVATE include)
+add_test(NAME LoggerTest COMMAND $<TARGET_FILE:efor_logger_tests>)
