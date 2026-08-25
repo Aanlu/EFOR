@@ -20,6 +20,7 @@ set(CORE_SOURCES
     src/core/app_controller.c
     src/core/command_executor.c
     src/core/path_utils.c
+    src/core/logger.c
     src/parsers/command_parser.c
 )
 

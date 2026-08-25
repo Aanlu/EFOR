@@ -10,7 +10,8 @@ typedef enum{
     KEY_ACTION_ESCAPE,
     KEY_ACTION_COPY,
     KEY_ACTION_TEXT,
-    KEY_ACTION_BACKSPACE
+    KEY_ACTION_BACKSPACE,
+    KEY_ACTION_RESIZE
 } KeyAction;
 typedef struct InputEvent{
     KeyAction action;

@@ -16,6 +16,8 @@ void init_app_state(AppState* state) {
     memset(state->command_buffer, 0, sizeof(state->command_buffer));
     memset(state->pending_cmd, 0, sizeof(state->pending_cmd));
     state->buffer_len = 0;
+    memset(state->status_message, 0, sizeof(state->status_message));
+    state->status_is_error = false;
 }
 
 void app_state_set_mode(AppState* state, AppStateMode new_mode) {

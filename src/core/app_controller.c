@@ -9,6 +9,7 @@
 #include "parsers/command_parser.h"
 #include "core/command_executor.h"
 #include "core/path_utils.h"
+#include "core/logger.h"
 
 static void navigate_into_dir(AppState* state, const FSDirectoryContent* content);
 static void navigate_back_dir(AppState* state);
@@ -22,6 +23,8 @@ bool handle_input(AppState* state, const FSDirectoryContent* content) {
 
     InputEvent event = input_get_action();
     if (event.action == KEY_ACTION_NONE) return false;
+
+    if (event.action == KEY_ACTION_RESIZE) return true;
 
     switch(state->current_mode) {
         case STATE_NAVIGATION:
@@ -202,9 +205,10 @@ void navigate_into_dir(AppState* state, const FSDirectoryContent* content) {
         }
 
         snprintf(state->target_path, sizeof(state->target_path), "%s", new_path);
-
         state->selectedFileIndex = 0;
         state->needs_sync = true;
+        
+        LOG_INFO("Navigating into directory: %s", state->target_path);
     }
 }
 
@@ -214,5 +218,8 @@ void navigate_back_dir(AppState* state) {
     if (navigate_path_back(state->current_path)) {
         snprintf(state->target_path, sizeof(state->target_path), "%s", state->current_path);
         state->needs_sync = true;
+        LOG_INFO("Navigating back to: %s", state->target_path);
+    } else {
+        LOG_WARN("Cannot navigate back: already at root directory (%s)", state->current_path);
     }
 }

@@ -26,15 +26,13 @@ int main(void) {
 
     fs_print_directory_content(&state, &content, state.current_path, state.selectedFileIndex);
 
-    while (state.running) {
+while (state.running) {
         bool needs_redraw = handle_input(&state, &content);
         
         if (needs_redraw) {
             app_sync_filesystem(&state, &content);
             fs_print_directory_content(&state, &content, state.current_path, state.selectedFileIndex);
         }
-
-        platform_sleep_ms(5);
     }
 
     platform_input_shutdown();

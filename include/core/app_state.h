@@ -29,6 +29,8 @@ typedef struct AppState{
     size_t buffer_len;
 
     char pending_cmd[MAX_BUFFER_LENGTH];
+    char status_message[MAX_BUFFER_LENGTH];
+    bool status_is_error;
 } AppState;
 
 void init_app_state(AppState* state);
