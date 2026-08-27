@@ -19,3 +19,7 @@ Thumbs.db
 *~
 .vscode/
 .idea/
+
+# Application runtime logs
+*.log
+debug.log

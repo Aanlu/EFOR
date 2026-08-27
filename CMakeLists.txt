@@ -5,7 +5,6 @@ project(EFOR VERSION 1.0 LANGUAGES C)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-
 if(MSVC)
     add_compile_options(/W4 /WX)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
@@ -15,13 +14,34 @@ endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-add_executable(efor 
+set(CORE_SOURCES
     src/main.c
     src/core/app_state.c
-    src/platform/windows/fs_reader_win.c
-    src/platform/windows/input_win.c
     src/core/app_controller.c
-    src/parsers/command_parser.c
     src/core/command_executor.c
-    src/platform/windows/fs_win.c
+    src/core/path_utils.c
+    src/core/logger.c
+    src/parsers/command_parser.c
 )
+
+if(WIN32)
+    set(PLATFORM_SOURCES
+        src/platform/windows/fs_reader_win.c
+        src/platform/windows/fs_win.c
+        src/platform/windows/input_win.c
+    )
+else()
+    set(PLATFORM_SOURCES "")
+endif()
+
+add_executable(efor ${CORE_SOURCES} ${PLATFORM_SOURCES})
+
+enable_testing()
+
+add_executable(efor_tests tests/test_paths.c src/core/path_utils.c)
+target_include_directories(efor_tests PRIVATE include)
+add_test(NAME PathUtilsTest COMMAND $<TARGET_FILE:efor_tests>)
+
+add_executable(efor_logger_tests tests/test_logger.c src/core/logger.c)
+target_include_directories(efor_logger_tests PRIVATE include)
+add_test(NAME LoggerTest COMMAND $<TARGET_FILE:efor_logger_tests>)
