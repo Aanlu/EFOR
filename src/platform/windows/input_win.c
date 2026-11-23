@@ -4,48 +4,48 @@
 
 #include "core/interfaces/input.h"
 
-static HANDLE hInput;
-static DWORD originalConsoleMode;
+static HANDLE input_handle;
+static DWORD original_console_mode;
 
 void platform_input_init(void) {
-    hInput = GetStdHandle(STD_INPUT_HANDLE);
-    GetConsoleMode(hInput, &originalConsoleMode);
+    input_handle = GetStdHandle(STD_INPUT_HANDLE);
+    GetConsoleMode(input_handle, &original_console_mode);
     
-    DWORD rawMode = originalConsoleMode & ~(ENABLE_PROCESSED_INPUT | ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT);
-    SetConsoleMode(hInput, rawMode);
+    DWORD raw_mode = original_console_mode & ~(ENABLE_PROCESSED_INPUT | ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT);
+    SetConsoleMode(input_handle, raw_mode);
 }
 
 void platform_input_shutdown(void) {
-    SetConsoleMode(hInput, originalConsoleMode);
+    SetConsoleMode(input_handle, original_console_mode);
 }
 
 InputEvent input_get_action(void) {
-    INPUT_RECORD inputRecord;
-    DWORD eventsRead = 0;
+    INPUT_RECORD input_record;
+    DWORD events_read = 0;
 
     while (true) {
-        ReadConsoleInput(hInput, &inputRecord, 1, &eventsRead);
+        ReadConsoleInput(input_handle, &input_record, 1, &events_read);
 
-        if (inputRecord.EventType == WINDOW_BUFFER_SIZE_EVENT) {
+        if (input_record.EventType == WINDOW_BUFFER_SIZE_EVENT) {
             return (InputEvent){ .action = KEY_ACTION_RESIZE, .character = '\0' };
         }
 
-        if (inputRecord.EventType == KEY_EVENT && inputRecord.Event.KeyEvent.bKeyDown) {
-            WORD vkCode = inputRecord.Event.KeyEvent.wVirtualKeyCode;
-            DWORD controlState = inputRecord.Event.KeyEvent.dwControlKeyState;
-            char asciiChar = inputRecord.Event.KeyEvent.uChar.AsciiChar;
+        if (input_record.EventType == KEY_EVENT && input_record.Event.KeyEvent.bKeyDown) {
+            WORD virtual_key_code = input_record.Event.KeyEvent.wVirtualKeyCode;
+            DWORD control_state = input_record.Event.KeyEvent.dwControlKeyState;
+            char ascii_character = input_record.Event.KeyEvent.uChar.AsciiChar;
 
-            bool isControl = (controlState & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED)) != 0;
-            bool isAltGr = (controlState & (LEFT_CTRL_PRESSED | RIGHT_ALT_PRESSED)) == (LEFT_CTRL_PRESSED | RIGHT_ALT_PRESSED);
+            bool is_control = (control_state & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED)) != 0;
+            bool is_altgr = (control_state & (LEFT_CTRL_PRESSED | RIGHT_ALT_PRESSED)) == (LEFT_CTRL_PRESSED | RIGHT_ALT_PRESSED);
 
-            if (isControl && !isAltGr) {
-                switch (vkCode) {
+            if (is_control && !is_altgr) {
+                switch (virtual_key_code) {
                     case 'C': return (InputEvent){ .action = KEY_ACTION_COPY, .character = '\0' };
                     default:  return (InputEvent){ .action = KEY_ACTION_NONE, .character = '\0' };
                 }
             }
 
-            switch (vkCode) {
+            switch (virtual_key_code) {
                 case VK_UP:     return (InputEvent){ .action = KEY_ACTION_UP,        .character = '\0' };
                 case VK_DOWN:   return (InputEvent){ .action = KEY_ACTION_DOWN,      .character = '\0' };
                 case VK_LEFT:   return (InputEvent){ .action = KEY_ACTION_LEFT,      .character = '\0' };
@@ -55,8 +55,8 @@ InputEvent input_get_action(void) {
                 case VK_BACK:   return (InputEvent){ .action = KEY_ACTION_BACKSPACE, .character = '\0' };
             }
 
-            if (asciiChar >= 32 && asciiChar <= 126) {
-                return (InputEvent){ .action = KEY_ACTION_TEXT, .character = asciiChar };
+            if (ascii_character >= 32 && ascii_character <= 126) {
+                return (InputEvent){ .action = KEY_ACTION_TEXT, .character = ascii_character };
             }
         }
     }

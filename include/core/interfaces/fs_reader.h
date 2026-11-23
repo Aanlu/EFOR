@@ -8,7 +8,7 @@ typedef struct AppState AppState;
 
 typedef struct FileInfo {
     char name[MAX_FILENAME_LENGTH];
-    int isDirectory;
+    int is_directory;
     unsigned long long size;
 } FileInfo;
 

@@ -20,7 +20,7 @@ typedef struct AppState{
     char language_code[8];
     unsigned int theme_color;
     int running;
-    int selectedFileIndex;
+    int selected_file_index;
     bool needs_reload;
     bool needs_sync;
     

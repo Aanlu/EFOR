@@ -9,7 +9,7 @@ void init_app_state(AppState* state) {
     memset(state->language_code, 0, sizeof(state->language_code));
     state->theme_color = 0xFFFFFF;
     state->running = 1;
-    state->selectedFileIndex = 0;
+    state->selected_file_index = 0;
     state->needs_reload = false;
     state->needs_sync = false;
     state->current_mode = STATE_NAVIGATION;

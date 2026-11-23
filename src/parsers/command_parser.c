@@ -3,7 +3,7 @@
 
 #include "parsers/command_parser.h"
 
-static ParsedCommand detectCommandType(char tokens[MAX_CMD_ARGS][MAX_ARG_LEN], int arg_count);
+static ParsedCommand detect_command_type(char tokens[MAX_CMD_ARGS][MAX_ARG_LEN], int arg_count);
 
 ParsedCommand command_parser(const char* raw_buffer, size_t buffer_len) {
     char token[MAX_CMD_ARGS][MAX_ARG_LEN];
@@ -44,10 +44,10 @@ ParsedCommand command_parser(const char* raw_buffer, size_t buffer_len) {
 
     if (args > MAX_CMD_ARGS) return (ParsedCommand){ .type = CMD_TYPE_TOO_MANY_ARGS };
 
-    return detectCommandType(token, args);
+    return detect_command_type(token, args);
 }
 
-static ParsedCommand detectCommandType(char tokens[MAX_CMD_ARGS][MAX_ARG_LEN], int arg_count) {
+static ParsedCommand detect_command_type(char tokens[MAX_CMD_ARGS][MAX_ARG_LEN], int arg_count) {
     ParsedCommand cmd;
     memset(&cmd, 0, sizeof(ParsedCommand));
 
