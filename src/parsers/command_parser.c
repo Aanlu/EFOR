@@ -13,20 +13,23 @@ ParsedCommand command_parser(const char* raw_buffer, size_t buffer_len) {
     int args = 0;
     size_t character = 1;
     int character_token = 0;
+    bool token_started = false;
 
     memset(token, 0, sizeof(token));
 
     while (character < buffer_len) {
         if (isspace((unsigned char)raw_buffer[character])) {
-            if (character > 1 && !isspace((unsigned char)raw_buffer[character - 1])) {
-                token[args][character_token] = '\0';
+            if (token_started) {
+                if (args < MAX_CMD_ARGS) token[args][character_token] = '\0';
                 args++;
                 character_token = 0;
+                token_started = false;
             }
             character++;
             continue;
         }
 
+        token_started = true;
         if (args < MAX_CMD_ARGS && character_token < MAX_ARG_LEN - 1) {
             token[args][character_token] = raw_buffer[character];
             character_token++;
@@ -34,8 +37,8 @@ ParsedCommand command_parser(const char* raw_buffer, size_t buffer_len) {
         character++;
     }
 
-    if (character_token > 0 && args < MAX_CMD_ARGS) {
-        token[args][character_token] = '\0';
+    if (token_started) {
+        if (args < MAX_CMD_ARGS) token[args][character_token] = '\0';
         args++;
     }
 

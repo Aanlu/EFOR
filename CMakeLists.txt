@@ -45,3 +45,7 @@ add_test(NAME PathUtilsTest COMMAND $<TARGET_FILE:efor_tests>)
 add_executable(efor_logger_tests tests/test_logger.c src/core/logger.c)
 target_include_directories(efor_logger_tests PRIVATE include)
 add_test(NAME LoggerTest COMMAND $<TARGET_FILE:efor_logger_tests>)
+
+add_executable(efor_command_parser_tests tests/test_command_parser.c src/parsers/command_parser.c)
+target_include_directories(efor_command_parser_tests PRIVATE include)
+add_test(NAME CommandParserTest COMMAND $<TARGET_FILE:efor_command_parser_tests>)
