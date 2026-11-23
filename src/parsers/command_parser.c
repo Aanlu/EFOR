@@ -8,7 +8,7 @@ static ParsedCommand detect_command_type(char tokens[MAX_CMD_ARGS][MAX_ARG_LEN],
 ParsedCommand command_parser(const char* raw_buffer, size_t buffer_len) {
     char token[MAX_CMD_ARGS][MAX_ARG_LEN];
     if (!raw_buffer) return (ParsedCommand){ .type = CMD_TYPE_NONE };
-    if (raw_buffer[1] == '\0') return (ParsedCommand){ .type = CMD_TYPE_EMPTY };
+    if (buffer_len <= 2) return (ParsedCommand){ .type = CMD_TYPE_EMPTY};
 
     int args = 0;
     size_t character = 1;
