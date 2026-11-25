@@ -30,3 +30,16 @@ void app_state_set_mode(AppState* state, AppStateMode new_mode) {
 
     state->current_mode = new_mode;
 }
+
+int app_state_clamp_index(int index, size_t count) {
+    if (count == 0) return 0;
+    if (index < 0) return 0;
+
+    /* index is non-negative here, so the cast to size_t keeps its value */
+    if ((size_t)index >= count) {
+        /* count is bounded by MAX_FILES_PER_DIR, so it always fits in an int */
+        return (int)(count - 1);
+    }
+
+    return index;
+}

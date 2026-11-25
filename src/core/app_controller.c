@@ -183,6 +183,8 @@ void app_sync_filesystem(AppState* state, FSDirectoryContent* content) {
     } else if (state->needs_reload) {
         fs_read_directory(state->current_path, content);
     }
+
+    state->selected_file_index = app_state_clamp_index(state->selected_file_index, content->count);
     state->needs_reload = false;
 }
 

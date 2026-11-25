@@ -49,3 +49,7 @@ add_test(NAME LoggerTest COMMAND $<TARGET_FILE:efor_logger_tests>)
 add_executable(efor_command_parser_tests tests/test_command_parser.c src/parsers/command_parser.c)
 target_include_directories(efor_command_parser_tests PRIVATE include)
 add_test(NAME CommandParserTest COMMAND $<TARGET_FILE:efor_command_parser_tests>)
+
+add_executable(efor_app_state_tests tests/test_app_state.c src/core/app_state.c)
+target_include_directories(efor_app_state_tests PRIVATE include)
+add_test(NAME AppStateTest COMMAND $<TARGET_FILE:efor_app_state_tests>)
