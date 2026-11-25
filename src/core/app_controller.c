@@ -102,7 +102,7 @@ static bool handle_command_input(AppState* state, InputEvent event) {
         case KEY_ACTION_ESCAPE:
             app_state_set_mode(state, STATE_NAVIGATION);
             return true;
-        
+
         case KEY_ACTION_BACKSPACE:
             if (state->buffer_len > 1) {
                 state->buffer_len--;
@@ -113,7 +113,7 @@ static bool handle_command_input(AppState* state, InputEvent event) {
                 return true;
             }
             return false;
-        
+
         case KEY_ACTION_TEXT:
             if (state->buffer_len < 254) {
                 state->command_buffer[state->buffer_len] = event.character;
@@ -122,7 +122,7 @@ static bool handle_command_input(AppState* state, InputEvent event) {
                 return true;
             }
             return false;
-        
+
         case KEY_ACTION_ENTER: {
             ParsedCommand line_command = command_parser(state->command_buffer, state->buffer_len);
 
@@ -209,7 +209,7 @@ void navigate_into_dir(AppState* state, const FSDirectoryContent* content) {
         snprintf(state->target_path, sizeof(state->target_path), "%s", new_path);
         state->selected_file_index = 0;
         state->needs_sync = true;
-        
+
         LOG_INFO("Navigating into directory: %s", state->target_path);
     }
 }

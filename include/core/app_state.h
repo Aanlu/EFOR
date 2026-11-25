@@ -23,7 +23,7 @@ typedef struct AppState{
     int selected_file_index;
     bool needs_reload;
     bool needs_sync;
-    
+
     AppStateMode current_mode;
     char command_buffer[MAX_BUFFER_LENGTH];
     size_t buffer_len;
