@@ -208,11 +208,16 @@ void navigate_into_dir(AppState* state, const FSDirectoryContent* content) {
     if (selected_item->is_directory) {
         char new_path[MAX_PATH_LENGTH];
         size_t current_path_len = strlen(state->current_path);
+        size_t reserved = sizeof(new_path) - current_path_len;
+        int path_limit = (int)current_path_len;
+        int name_limit = (reserved > 2u) ? (int)(reserved - 2u) : 0;
 
         if (current_path_len > 0 && state->current_path[current_path_len - 1] != '\\') {
-            snprintf(new_path, sizeof(new_path), "%s\\%s", state->current_path, selected_item->name);
+            snprintf(new_path, sizeof(new_path), "%.*s\\%.*s",
+                     path_limit, state->current_path, name_limit, selected_item->name);
         } else {
-            snprintf(new_path, sizeof(new_path), "%s%s", state->current_path, selected_item->name);
+            snprintf(new_path, sizeof(new_path), "%.*s%.*s",
+                     path_limit, state->current_path, name_limit + 1, selected_item->name);
         }
 
         snprintf(state->target_path, sizeof(state->target_path), "%s", new_path);

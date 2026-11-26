@@ -91,7 +91,11 @@ int fs_read_directory(const char* path, FSDirectoryContent* content) {
         }
 
         if (content->count < MAX_FILES_PER_DIR) {
-            snprintf(content->items[content->count].name, sizeof(content->items[content->count].name), "%s", find_data.cFileName);
+            snprintf(content->items[content->count].name,
+                     sizeof(content->items[content->count].name),
+                     "%.*s",
+                     (int)(sizeof(content->items[content->count].name) - 1),
+                     find_data.cFileName);
             content->items[content->count].is_directory = (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? 1 : 0;
             content->items[content->count].size = ((unsigned long long)find_data.nFileSizeHigh << 32) | find_data.nFileSizeLow;
             content->count++;
