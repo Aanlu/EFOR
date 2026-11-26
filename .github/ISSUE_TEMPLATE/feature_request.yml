@@ -1,0 +1,47 @@
+name: Feature request
+description: Propose a new capability or improvement.
+title: "feat(scope): short description"
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing an improvement. Keep it small enough to deliver in
+        one pull request.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What limitation does this solve? Who is affected?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe the behavior you want, not the implementation.
+    validations:
+      required: true
+
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+      description: Use checkboxes so the issue can be closed objectively.
+      value: |
+        - [ ] Behavior is implemented
+        - [ ] Tests or manual checks cover the behavior
+        - [ ] Documentation is updated if needed
+    validations:
+      required: true
+
+  - type: input
+    id: related
+    attributes:
+      label: Related issues
+      description: Add `Part of #N` if this belongs to a tracking issue.
+      placeholder: "Part of #6"
+    validations:
+      required: false
