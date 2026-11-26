@@ -11,11 +11,14 @@ static void build_full_path(char* dest, size_t dest_size, const char* current_pa
     if (!dest || dest_size == 0 || !current_path || !arg) return;
 
     size_t len = strlen(current_path);
+    size_t reserved = (dest_size > len) ? dest_size - len : 0u;
+    int path_limit = (int)len;
+    int arg_limit = (reserved > 2u) ? (int)(reserved - 2u) : 0;
 
     if (len > 0 && current_path[len - 1] != '\\') {
-        snprintf(dest, dest_size, "%s\\%s", current_path, arg);
+        snprintf(dest, dest_size, "%.*s\\%.*s", path_limit, current_path, arg_limit, arg);
     } else {
-        snprintf(dest, dest_size, "%s%s", current_path, arg);
+        snprintf(dest, dest_size, "%.*s%.*s", path_limit, current_path, arg_limit + 1, arg);
     }
 }
 
@@ -40,10 +43,10 @@ void execute_command(AppState* state, const ParsedCommand* cmd) {
             if (fs_create_directory(full_path)) {
                 state->needs_reload = true;
                 LOG_INFO("Directory created successfully: %s", full_path);
-                snprintf(state->status_message, sizeof(state->status_message), "Folder '%s' created.", cmd->args[1]);
+                snprintf(state->status_message, sizeof(state->status_message), "Folder '%.200s' created.", cmd->args[1]);
             } else {
                 LOG_ERROR("Failed to create directory: %s", full_path);
-                snprintf(state->status_message, sizeof(state->status_message), "Error: Could not create '%s'.", cmd->args[1]);
+                snprintf(state->status_message, sizeof(state->status_message), "Error: Could not create '%.200s'.", cmd->args[1]);
                 state->status_is_error = true;
             }
             break;
@@ -60,10 +63,10 @@ void execute_command(AppState* state, const ParsedCommand* cmd) {
             if (fs_delete(full_path)) {
                 state->needs_reload = true;
                 LOG_INFO("Target deleted successfully: %s", full_path);
-                snprintf(state->status_message, sizeof(state->status_message), "Target '%s' deleted.", cmd->args[1]);
+                snprintf(state->status_message, sizeof(state->status_message), "Target '%.200s' deleted.", cmd->args[1]);
             } else {
                 LOG_ERROR("Failed to delete target: %s", full_path);
-                snprintf(state->status_message, sizeof(state->status_message), "Error: Could not delete '%s'.", cmd->args[1]);
+                snprintf(state->status_message, sizeof(state->status_message), "Error: Could not delete '%.200s'.", cmd->args[1]);
                 state->status_is_error = true;
             }
             break;
@@ -80,10 +83,10 @@ void execute_command(AppState* state, const ParsedCommand* cmd) {
             if (fs_create_file(full_path)) {
                 state->needs_reload = true;
                 LOG_INFO("File created successfully: %s", full_path);
-                snprintf(state->status_message, sizeof(state->status_message), "File '%s' created.", cmd->args[1]);
+                snprintf(state->status_message, sizeof(state->status_message), "File '%.200s' created.", cmd->args[1]);
             } else {
                 LOG_ERROR("Failed to create file: %s", full_path);
-                snprintf(state->status_message, sizeof(state->status_message), "Error: Could not create '%s'.", cmd->args[1]);
+                snprintf(state->status_message, sizeof(state->status_message), "Error: Could not create '%.200s'.", cmd->args[1]);
                 state->status_is_error = true;
             }
             break;
@@ -103,10 +106,10 @@ void execute_command(AppState* state, const ParsedCommand* cmd) {
             if (fs_rename(full_path, new_full_path)) {
                 state->needs_reload = true;
                 LOG_INFO("Renamed '%s' to '%s'", full_path, new_full_path);
-                snprintf(state->status_message, sizeof(state->status_message), "Renamed to '%s'.", cmd->args[2]);
+                snprintf(state->status_message, sizeof(state->status_message), "Renamed to '%.200s'.", cmd->args[2]);
             } else {
                 LOG_ERROR("Failed to rename '%s' to '%s'", full_path, new_full_path);
-                snprintf(state->status_message, sizeof(state->status_message), "Error: Could not rename '%s'.", cmd->args[1]);
+                snprintf(state->status_message, sizeof(state->status_message), "Error: Could not rename '%.200s'.", cmd->args[1]);
                 state->status_is_error = true;
             }
             break;

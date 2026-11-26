@@ -59,8 +59,10 @@ static ParsedCommand detect_command_type(char tokens[MAX_CMD_ARGS][MAX_ARG_LEN],
     cmd.arg_count = arg_count;
 
     for (int i = 0; i < arg_count && i < MAX_CMD_ARGS; i++) {
-        strncpy(cmd.args[i], tokens[i], MAX_ARG_LEN - 1);
-        cmd.args[i][MAX_ARG_LEN - 1] = '\0';
+        size_t len = strlen(tokens[i]);
+        if (len >= MAX_ARG_LEN) len = MAX_ARG_LEN - 1;
+        memcpy(cmd.args[i], tokens[i], len);
+        cmd.args[i][len] = '\0';
     }
 
     if (strcmp(tokens[0], "mkdir") == 0) {
