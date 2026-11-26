@@ -62,12 +62,8 @@ void fs_print_directory_content(AppState* state, const FSDirectoryContent* conte
     printf(" Usa W/S o Flechas para moverte | ESC para salir\n");
     printf("==============================================================\n");
 
-    if (state->current_mode == STATE_COMMAND_INPUT) {
-        printf("%s", state->command_buffer);
-    } else {
-        printf("Presiona ':' para ingresar un comando.");
-    }
-    
+    printf("%s", app_state_footer_text(state));
+
     fflush(stdout);
 }
 

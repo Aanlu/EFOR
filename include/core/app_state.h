@@ -38,3 +38,4 @@ typedef struct AppState{
 void init_app_state(AppState* state);
 void app_state_set_mode(AppState* state, AppStateMode new_mode);
 int app_state_clamp_index(int index, size_t count);
+const char* app_state_footer_text(const AppState* state);
