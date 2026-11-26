@@ -1,0 +1,68 @@
+name: Bug report
+description: Report something that is not working as expected.
+title: "fix(scope): short description"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please fill in every section so the problem
+        can be reproduced without guessing.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: Which commit, tag or build are you using?
+      placeholder: "2d4249c"
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, compiler and terminal.
+      placeholder: "Windows 11, MSVC, Windows Terminal"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happens
+    attributes:
+      label: What happens
+      description: Describe the incorrect behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: Describe the correct behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps, including commands and keys pressed.
+      placeholder: |
+        1. Run `.\build\Debug\efor.exe`
+        2. Press `:` and type `:delete test`
+        3. Observe that no confirmation prompt is shown
+    validations:
+      required: true
+
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+      description: Use checkboxes so the issue can be closed objectively.
+      value: |
+        - [ ] The bug is reproduced
+        - [ ] The fix is implemented
+        - [ ] A test or manual check covers the fix
+    validations:
+      required: true
