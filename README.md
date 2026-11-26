@@ -1,13 +1,14 @@
 # EFOR — Event-driven File Explorer
 
+![CI](https://github.com/Aanlu/EFOR/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/github/license/Aanlu/EFOR)
 ![Language](https://img.shields.io/github/languages/top/Aanlu/EFOR)
 ![Last Commit](https://img.shields.io/github/last-commit/Aanlu/EFOR)
 
 > **Status:** Interactive Alpha. The event-driven core, Win32 input backend,
-> command engine, file-based logging and footer feedback are implemented.
-> Dynamic resizing, scroll, command history, CI and release packaging remain
-> open work in [issue #6](https://github.com/Aanlu/EFOR/issues/6).
+> command engine, file-based logging, footer feedback and CI are implemented.
+> Dynamic resizing, scroll, command history and release packaging remain open
+> work in [issue #6](https://github.com/Aanlu/EFOR/issues/6).
 
 EFOR is a lightweight, modular terminal file explorer written in C. It keeps a
 platform-agnostic core, avoids external library dependencies, and is meant to be
