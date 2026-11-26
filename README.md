@@ -4,55 +4,93 @@
 ![Language](https://img.shields.io/github/languages/top/Aanlu/EFOR)
 ![Last Commit](https://img.shields.io/github/last-commit/Aanlu/EFOR)
 
-> 🚀 **Status:** Interactive Alpha phase. The core architecture is defined, and the basic TUI (Text User Interface) rendering engine is functional. Directory reading and UI navigation via the Windows backend are operational.
+> **Status:** Interactive Alpha. The event-driven core, Win32 input backend,
+> command engine and file-based logging are implemented. The UI is still
+> static: dynamic resizing, scroll, footer feedback and command history remain
+> open work in [issue #6](https://github.com/Aanlu/EFOR/issues/6).
 
-A lightweight, modular terminal file explorer written in C. Designed with a strict focus on system architecture, platform abstraction, and memory safety, avoiding external library dependencies.
+A lightweight, modular terminal file explorer written in C. Designed with a
+strict focus on system architecture, platform abstraction, and memory safety,
+avoiding external library dependencies.
+
+## Implemented features
+
+- Directory listing through the Win32 backend (hidden, system and reparse-point
+  entries are skipped)
+- Navigation: arrow keys to move, LEFT to go back, RIGHT/ENTER to enter a
+  directory, ESC to exit
+- Commands: press `:` to open the command line, then use:
+  - `:mkdir <name>` — create a directory
+  - `:touch <name>` — create a file
+  - `:delete <name>` — delete a file or directory (asks for `y`/`n` confirmation)
+  - `:rename <old> <new>` — rename an item (asks for `y`/`n` confirmation)
+  - `:cd <path>` — change directory
+- Blocking, event-driven console input with no busy waiting
+- Input failures and early exits restore the original console mode
+- Timestamped, append-mode logging to `debug.log`
+- 7 automated tests covering paths, logger, parser, app state, process
+  lifecycle, input errors and redirected stdin
 
 ## Core Architecture
 
 * **Platform-Agnostic Core:** Decoupled application logic and event handling from OS-specific file system APIs (POSIX/Win32) via abstract interfaces.
 * **Centralized State Management:** Strict runtime controls for configuration, themes, and UI events via `app_controller` and `app_state`.
-* **Custom Parsers (WIP):** Memory-safe, hand-written text parsers for initialization (.init) and configuration (.cfg) files.
-* **Low-Latency Event Engine:** Input capture loop with controlled screen clearing to prevent terminal flickering and input lag.
+* **Custom Parsers:** Memory-safe, hand-written parser for command input with argument validation.
+* **Low-Latency Event Engine:** Blocking `ReadConsoleInput` loop with controlled screen clearing to prevent terminal flickering and input lag.
+* **File-Based Logging:** Timestamped append-only diagnostics written to `debug.log`.
 
 ## Project Structure
 
     include/          # Public API and component interfaces (.h)
     ├── core/         # State management, lifecycle, and main controller
-    ├── parsers/      # Text parsing definitions
-    └── platform/     # OS abstraction layers (Input & File System)
+    │   └── interfaces/  # Input and filesystem abstractions
+    ├── parsers/      # Command parsing definitions
     src/              # Implementation details (.c)
     ├── core/         # Internal logic and event delegation
-    ├── parsers/      # Configuration parsing algorithms
-    ├── platform/     # Native implementations (Currently Win32 WinAPI)
+    ├── parsers/      # Command parsing algorithms
+    ├── platform/     # Native implementations (currently Win32)
+    │   └── windows/
     └── main.c        # Application entry point and initializer
-    config/           # User configuration profiles and localization data
+    tests/            # Unit and integration tests
 
 ## Build Instructions
 
 **Requirements:**
-* CMake (3.10+)
-* C Compiler (MSVC for the current Windows environment, extensible to GCC/Clang)
 
-**Build Commands (Terminal):**
+* CMake 3.10+
+* C99 compiler (MSVC via Visual Studio in the current Windows environment)
 
-1. Configure the build directory:
-    ```bash
-    cmake -B build
-    ```
-2. Build the project:
-    ```bash
-    cmake --build build
-    ```
-3. Run the application (Windows):
-    ```bash
-    .\build\Debug\efor.exe
-    ```
-    *(Note: The exact path to the executable may vary depending on your local CMake generator).*
+**Build and test:**
+
+```sh
+cmake -B build
+cmake --build build --config Debug
+ctest --test-dir build -C Debug
+```
+
+Run the application on Windows:
+
+```sh
+.\build\Debug\efor.exe
+```
+
+The `--config Debug` flag is needed with multi-config generators such as
+Visual Studio. With single-config generators (for example Ninja), use
+`cmake --build build` instead.
+
+## Roadmap
+
+Work for the v0.3.0 milestone is tracked in
+[issue #6](https://github.com/Aanlu/EFOR/issues/6). Remaining items include a
+dynamic, size-aware UI with scroll, a footer that renders status messages and
+confirmation prompts, command history, CI on `windows-latest`, an English UI,
+`CHANGELOG.md`, and the version bump to 0.3.0.
 
 ## Contributing
 
-This project is in an early stage. See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on the current state and how to get involved once the architecture stabilizes.
+This project is in an early stage. Contributions are welcome: open an issue
+first to agree on the scope, then send a focused pull request that references
+it. See the roadmap above for the current work in progress.
 
 ## License
 
