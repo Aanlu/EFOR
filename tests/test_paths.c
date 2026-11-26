@@ -28,10 +28,10 @@ void test_navigate_path_back_already_root(void) {
 }
 
 int main(void) {
-    printf("--- EJECUTANDO PRUEBAS UNITARIAS DE RUTAS ---\n");
+    printf("--- RUNNING PATH UNIT TESTS ---\n");
     test_navigate_path_back_normal();
     test_navigate_path_back_to_root();
     test_navigate_path_back_already_root();
-    printf("--- TODAS LAS PRUEBAS PASARON CON EXITO ---\n");
+    printf("--- ALL TESTS PASSED ---\n");
     return 0;
 }
