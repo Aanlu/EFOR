@@ -44,3 +44,13 @@ int app_state_clamp_index(int index, size_t count) {
 
     return index;
 }
+
+const char* app_state_footer_text(const AppState* state) {
+    if (!state) return "";
+
+    if (state->current_mode == STATE_COMMAND_INPUT) return state->command_buffer;
+    if (state->current_mode == STATE_CONFIRMATION)return "Confirm? [Y/N]";
+    if (state->status_message[0] != '\0') return state->status_message;
+
+    return "Presione ':' para ingresar un comando";
+}

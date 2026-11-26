@@ -33,6 +33,8 @@ bool handle_input(AppState* state, const FSDirectoryContent* content) {
 
     if (event.action == KEY_ACTION_RESIZE) return true;
 
+    state->status_message[0] = '\0';
+
     switch(state->current_mode) {
         case STATE_NAVIGATION:
             return handle_navigation_input(state, content, event);
