@@ -11,6 +11,21 @@ process lightweight is part of the design.
 - No direct pushes to `main`.
 - Keep user-facing text, comments, tests and documentation in English.
 
+## Labels
+
+Use labels consistently so anyone can filter the backlog.
+
+- **Type:** `bug`, `feature`, `refactor`, `tech-debt`, `testing`,
+  `documentation`, `question`. Use one primary type per issue.
+- **Platform:** `windows`, `linux`, `cross-platform`. Use `cross-platform` for
+  shared abstractions that affect both backends.
+- **Area:** `ui`, `build`, `ci`, `release`.
+- **Community:** `good first issue`, `help wanted`.
+- **Lifecycle:** `duplicate`, `invalid`, `wontfix`.
+
+Every issue should have a type label. Add a platform or area label whenever the
+work is specific to one of them.
+
 ## Reporting issues
 
 Use one of the issue templates. A good issue contains:
