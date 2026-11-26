@@ -1,0 +1,6 @@
+#pragma once
+
+#define MAX_PATH_LENGTH 4096
+#define MAX_FILENAME_LENGTH 256
+#define MAX_BUFFER_LENGTH 256
+#define MAX_FILES_PER_DIR 1024

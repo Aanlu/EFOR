@@ -1,4 +1,4 @@
-#include "fs/fs.h"
+#include "core/interfaces/fs.h"
 #include <windows.h>
 #include <stdbool.h>
 
@@ -9,9 +9,9 @@ bool fs_create_directory(const char* path) {
 
 bool fs_create_file(const char* path) {
     if (!path) return false;
-    HANDLE hFile = CreateFileA(path, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (hFile == INVALID_HANDLE_VALUE) return false;
-    CloseHandle(hFile);
+    HANDLE file_handle = CreateFileA(path, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (file_handle == INVALID_HANDLE_VALUE) return false;
+    CloseHandle(file_handle);
     return true;
 }
 

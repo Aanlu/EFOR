@@ -1,6 +1,6 @@
-#ifndef INPUT_H
-#define INPUT_H
+#pragma once
 
+#include <stdbool.h>
 
 typedef enum{
     KEY_ACTION_NONE,
@@ -9,21 +9,20 @@ typedef enum{
     KEY_ACTION_LEFT,
     KEY_ACTION_RIGHT,
     KEY_ACTION_ENTER,
-    KEY_ACTION_ESCAPE, 
+    KEY_ACTION_ESCAPE,
     KEY_ACTION_COPY,
     KEY_ACTION_TEXT,
-    KEY_ACTION_BACKSPACE
+    KEY_ACTION_BACKSPACE,
+    KEY_ACTION_RESIZE,
+    KEY_ACTION_ERROR
 } KeyAction;
-typedef struct{
+typedef struct InputEvent{
     KeyAction action;
     char character;
 }InputEvent;
 
 InputEvent input_get_action(void);
 
-void platform_sleep_ms(unsigned int milliseconds);
 void platform_clear_screen(void);
-void platform_input_init(void);
+bool platform_input_init(void);
 void platform_input_shutdown(void);
-
-#endif

@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "platform/fs_reader.h"
-#include "platform/input.h"
+#include "core/interfaces/fs_reader.h"
+#include "core/interfaces/input.h"
+#include "core/app_state.h"
 
 void fs_directory_content_init(FSDirectoryContent* content) {
     if (!content) return;
@@ -45,10 +46,10 @@ void fs_print_directory_content(AppState* state, const FSDirectoryContent* conte
             }
 
             char size_str[16];
-            format_file_size(content->items[i].size, content->items[i].isDirectory, size_str, sizeof(size_str));
+            format_file_size(content->items[i].size, content->items[i].is_directory, size_str, sizeof(size_str));
 
-            if (content->items[i].isDirectory) {
-                char dir_name[MAX_FILENAME_LEN + 2];
+            if (content->items[i].is_directory) {
+                char dir_name[MAX_FILENAME_LENGTH + 2];
                 snprintf(dir_name, sizeof(dir_name), "[%s]", content->items[i].name);
                 printf("%-35s %12s\n", dir_name, size_str);
             } else {
@@ -74,36 +75,35 @@ void fs_print_directory_content(AppState* state, const FSDirectoryContent* conte
 int fs_read_directory(const char* path, FSDirectoryContent* content) {
     if (!path || !content) return -1;
 
-    WIN32_FIND_DATA fFileData;
+    WIN32_FIND_DATA find_data;
 
-    char search_path[MAX_PATH_LEN];
+    char search_path[MAX_PATH_LENGTH];
     snprintf(search_path, sizeof(search_path), "%s\\*", path);
 
-    HANDLE hFind = FindFirstFile(search_path, &fFileData);
-    if (hFind == INVALID_HANDLE_VALUE) {
+    HANDLE find_handle = FindFirstFile(search_path, &find_data);
+    if (find_handle == INVALID_HANDLE_VALUE) {
         return -1;
     }
     content -> count = 0;
     do{
-        if (strcmp(fFileData.cFileName, ".") == 0 || strcmp(fFileData.cFileName, "..") == 0) {
+        if (strcmp(find_data.cFileName, ".") == 0 || strcmp(find_data.cFileName, "..") == 0) {
             continue;
         }
 
-        if ((fFileData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) || (fFileData.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) || (fFileData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
+        if ((find_data.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) || (find_data.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) || (find_data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
             continue;
         }
 
         if (content->count < MAX_FILES_PER_DIR) {
-            strncpy(content->items[content->count].name, fFileData.cFileName, MAX_FILENAME_LEN - 1);
-            content->items[content->count].name[MAX_FILENAME_LEN - 1] = '\0';
-            content->items[content->count].isDirectory = (fFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? 1 : 0;
-            content->items[content->count].size = ((unsigned long long)fFileData.nFileSizeHigh << 32) | fFileData.nFileSizeLow;
+            snprintf(content->items[content->count].name, sizeof(content->items[content->count].name), "%s", find_data.cFileName);
+            content->items[content->count].is_directory = (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? 1 : 0;
+            content->items[content->count].size = ((unsigned long long)find_data.nFileSizeHigh << 32) | find_data.nFileSizeLow;
             content->count++;
         }
 
-    }while (FindNextFile(hFind, &fFileData) && content->count < MAX_FILES_PER_DIR);
+    }while (FindNextFile(find_handle, &find_data) && content->count < MAX_FILES_PER_DIR);
 
-    FindClose(hFind);
+    FindClose(find_handle);
     return 0;
 }
 

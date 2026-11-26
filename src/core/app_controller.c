@@ -2,9 +2,14 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "core/app_state.h"
+#include "core/interfaces/fs_reader.h"
 #include "core/app_controller.h"
+#include "core/interfaces/input.h"
 #include "parsers/command_parser.h"
 #include "core/command_executor.h"
+#include "core/path_utils.h"
+#include "core/logger.h"
 
 static void navigate_into_dir(AppState* state, const FSDirectoryContent* content);
 static void navigate_back_dir(AppState* state);
@@ -18,6 +23,15 @@ bool handle_input(AppState* state, const FSDirectoryContent* content) {
 
     InputEvent event = input_get_action();
     if (event.action == KEY_ACTION_NONE) return false;
+
+    if (event.action == KEY_ACTION_ERROR) {
+        state->status_is_error = true;
+        state->running = 0;
+        state->input_failed = true;
+        return false;
+    }
+
+    if (event.action == KEY_ACTION_RESIZE) return true;
 
     switch(state->current_mode) {
         case STATE_NAVIGATION:
@@ -46,15 +60,15 @@ static bool handle_navigation_input(AppState* state, const FSDirectoryContent* c
 
     switch (event.action) {
         case KEY_ACTION_UP:
-            if (state->selectedFileIndex > 0) {
-                state->selectedFileIndex--;
+            if (state->selected_file_index > 0) {
+                state->selected_file_index--;
                 return true;
             }
             return false;
 
         case KEY_ACTION_DOWN:
-            if (state->selectedFileIndex < max_file_index) {
-                state->selectedFileIndex++;
+            if (state->selected_file_index < max_file_index) {
+                state->selected_file_index++;
                 return true;
             }
             return false;
@@ -95,7 +109,7 @@ static bool handle_command_input(AppState* state, InputEvent event) {
         case KEY_ACTION_ESCAPE:
             app_state_set_mode(state, STATE_NAVIGATION);
             return true;
-        
+
         case KEY_ACTION_BACKSPACE:
             if (state->buffer_len > 1) {
                 state->buffer_len--;
@@ -106,7 +120,7 @@ static bool handle_command_input(AppState* state, InputEvent event) {
                 return true;
             }
             return false;
-        
+
         case KEY_ACTION_TEXT:
             if (state->buffer_len < 254) {
                 state->command_buffer[state->buffer_len] = event.character;
@@ -115,17 +129,16 @@ static bool handle_command_input(AppState* state, InputEvent event) {
                 return true;
             }
             return false;
-        
-        case KEY_ACTION_ENTER: {
-            ParsedCommand lineCommand = command_parser(state->command_buffer, state->buffer_len);
 
-            if (lineCommand.is_destructive) {
-                strncpy(state->pending_cmd, state->command_buffer, sizeof(state->pending_cmd) - 1);
-                state->pending_cmd[sizeof(state->pending_cmd) - 1] = '\0';
+        case KEY_ACTION_ENTER: {
+            ParsedCommand line_command = command_parser(state->command_buffer, state->buffer_len);
+
+            if (line_command.is_destructive) {
+                snprintf(state->pending_cmd, sizeof(state->pending_cmd), "%s", state->command_buffer);
                 app_state_set_mode(state, STATE_CONFIRMATION);
             } else {
                 app_state_set_mode(state, STATE_PROCESSING);
-                execute_command(state, &lineCommand);
+                execute_command(state, &line_command);
                 app_state_set_mode(state, STATE_NAVIGATION);
             }
             return true;
@@ -143,8 +156,8 @@ static bool handle_confirmation_input(AppState* state, InputEvent event) {
         char c = (char)tolower((unsigned char)event.character);
         if (c == 'y') {
             app_state_set_mode(state, STATE_PROCESSING);
-            ParsedCommand lineCommand = command_parser(state->pending_cmd, strlen(state->pending_cmd));
-            execute_command(state, &lineCommand);
+            ParsedCommand line_command = command_parser(state->pending_cmd, strlen(state->pending_cmd));
+            execute_command(state, &line_command);
             memset(state->pending_cmd, 0, sizeof(state->pending_cmd));
             app_state_set_mode(state, STATE_NAVIGATION);
             return true;
@@ -167,65 +180,55 @@ void app_sync_filesystem(AppState* state, FSDirectoryContent* content) {
 
     if (state->needs_sync) {
         if (fs_read_directory(state->target_path, content) == 0) {
-            strncpy(state->current_path, state->target_path, MAX_PATH_LENGTH);
-            state->selectedFileIndex = 0;
+            snprintf(state->current_path, sizeof(state->current_path), "%s", state->target_path);
+            state->selected_file_index = 0;
         } else {
-            strncpy(state->target_path, state->current_path, MAX_PATH_LENGTH);
+            snprintf(state->target_path, sizeof(state->target_path), "%s", state->current_path);
             fs_read_directory(state->current_path, content);
         }
         state->needs_sync = false;
     } else if (state->needs_reload) {
         fs_read_directory(state->current_path, content);
     }
+
+    state->selected_file_index = app_state_clamp_index(state->selected_file_index, content->count);
     state->needs_reload = false;
 }
 
 void navigate_into_dir(AppState* state, const FSDirectoryContent* content) {
     if (!state || !content) return;
 
-    if (state->selectedFileIndex < 0 || state->selectedFileIndex >= (int)content->count) {
+    if (state->selected_file_index < 0 || state->selected_file_index >= (int)content->count) {
         return;
     }
 
-    const FileInfo* selectedItem = &content->items[state->selectedFileIndex];
-    if (selectedItem->isDirectory) {
+    const FileInfo* selected_item = &content->items[state->selected_file_index];
+    if (selected_item->is_directory) {
         char new_path[MAX_PATH_LENGTH];
         size_t current_path_len = strlen(state->current_path);
 
         if (current_path_len > 0 && state->current_path[current_path_len - 1] != '\\') {
-            snprintf(new_path, sizeof(new_path), "%s\\%s", state->current_path, selectedItem->name);
+            snprintf(new_path, sizeof(new_path), "%s\\%s", state->current_path, selected_item->name);
         } else {
-            snprintf(new_path, sizeof(new_path), "%s%s", state->current_path, selectedItem->name);
+            snprintf(new_path, sizeof(new_path), "%s%s", state->current_path, selected_item->name);
         }
 
-        strncpy(state->target_path, new_path, MAX_PATH_LENGTH - 1);
-        state->target_path[MAX_PATH_LENGTH - 1] = '\0';
-
-        state->selectedFileIndex = 0;
+        snprintf(state->target_path, sizeof(state->target_path), "%s", new_path);
+        state->selected_file_index = 0;
         state->needs_sync = true;
+
+        LOG_INFO("Navigating into directory: %s", state->target_path);
     }
 }
 
 void navigate_back_dir(AppState* state) {
     if (!state) return;
 
-    strncpy(state->target_path, state->current_path, MAX_PATH_LENGTH);
-
-    char* last_backslash = strrchr(state->target_path, '\\');
-
-    if (last_backslash) {
-        size_t index = last_backslash - state->target_path;
-
-        if (index == 2 && *(last_backslash + 1) == '\0') {
-            return;
-        }
-
-        if (index == 2) {
-            *(last_backslash + 1) = '\0';
-            state->needs_sync = true;
-        } else if (index > 2) {
-            *last_backslash = '\0';
-            state->needs_sync = true;
-        }
+    if (navigate_path_back(state->current_path)) {
+        snprintf(state->target_path, sizeof(state->target_path), "%s", state->current_path);
+        state->needs_sync = true;
+        LOG_INFO("Navigating back to: %s", state->target_path);
+    } else {
+        LOG_WARN("Cannot navigate back: already at root directory (%s)", state->current_path);
     }
 }

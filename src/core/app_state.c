@@ -9,13 +9,16 @@ void init_app_state(AppState* state) {
     memset(state->language_code, 0, sizeof(state->language_code));
     state->theme_color = 0xFFFFFF;
     state->running = 1;
-    state->selectedFileIndex = 0;
+    state->selected_file_index = 0;
     state->needs_reload = false;
     state->needs_sync = false;
     state->current_mode = STATE_NAVIGATION;
     memset(state->command_buffer, 0, sizeof(state->command_buffer));
     memset(state->pending_cmd, 0, sizeof(state->pending_cmd));
     state->buffer_len = 0;
+    memset(state->status_message, 0, sizeof(state->status_message));
+    state->status_is_error = false;
+    state->input_failed = false;
 }
 
 void app_state_set_mode(AppState* state, AppStateMode new_mode) {
@@ -27,4 +30,17 @@ void app_state_set_mode(AppState* state, AppStateMode new_mode) {
     }
 
     state->current_mode = new_mode;
+}
+
+int app_state_clamp_index(int index, size_t count) {
+    if (count == 0) return 0;
+    if (index < 0) return 0;
+
+    /* index is non-negative here, so the cast to size_t keeps its value */
+    if ((size_t)index >= count) {
+        /* count is bounded by MAX_FILES_PER_DIR, so it always fits in an int */
+        return (int)(count - 1);
+    }
+
+    return index;
 }

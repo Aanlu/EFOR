@@ -1,5 +1,4 @@
-#ifndef COMMAND_PARSER_H
-#define COMMAND_PARSER_H
+#pragma once
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -24,7 +23,7 @@ typedef enum {
     CMD_TYPE_EXIT
 } CommandType;
 
-typedef struct{
+typedef struct ParsedCommand {
     CommandType type;
     char args[MAX_CMD_ARGS][MAX_ARG_LEN];
     int arg_count;
@@ -32,5 +31,3 @@ typedef struct{
 }ParsedCommand;
 
 ParsedCommand command_parser(const char* raw_buffer, size_t buffer_len);
-
-#endif
