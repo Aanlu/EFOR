@@ -97,8 +97,8 @@ Studio. With single-config generators such as Ninja, use `cmake --build build`.
 
 Work for the v0.3.0 milestone is tracked in
 [issue #6](https://github.com/Aanlu/EFOR/issues/6). Remaining items include a
-dynamic, size-aware UI with scroll, command history, CI on `windows-latest`, an
-English UI, `CHANGELOG.md`, and the version bump to 0.3.0.
+dynamic, size-aware UI with scroll, command history, `CHANGELOG.md`, version
+0.3.0 and the pre-release tag with a Windows build.
 
 ## Documentation
 

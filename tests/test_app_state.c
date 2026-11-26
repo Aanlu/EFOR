@@ -45,7 +45,7 @@ static void test_default_footer_without_message(void) {
     init_app_state(&s);
 
     assert(strcmp(app_state_footer_text(&s),
-                  "Presione ':' para ingresar un comando") == 0);
+                  "Press ':' to enter a command.") == 0);
 }
 
 static void test_footer_shows_status_message(void) {
@@ -67,7 +67,7 @@ static void test_footer_shows_then_clears_message(void) {
     s.status_message[0] = '\0';
 
     assert(strcmp(app_state_footer_text(&s),
-                  "Presione ':' para ingresar un comando") == 0);
+                  "Press ':' to enter a command.") == 0);
 }
 
 static void test_footer_shows_command_buffer(void) {

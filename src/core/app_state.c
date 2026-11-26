@@ -52,5 +52,5 @@ const char* app_state_footer_text(const AppState* state) {
     if (state->current_mode == STATE_CONFIRMATION)return "Confirm? [Y/N]";
     if (state->status_message[0] != '\0') return state->status_message;
 
-    return "Presione ':' para ingresar un comando";
+    return "Press ':' to enter a command.";
 }

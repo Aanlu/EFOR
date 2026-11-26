@@ -32,11 +32,11 @@ void fs_print_directory_content(AppState* state, const FSDirectoryContent* conte
     platform_clear_screen();
 
     printf("==============================================================\n");
-    printf(" RUTA ACTUAL: %s\n", current_path);
+    printf(" CURRENT PATH: %s\n", current_path);
     printf("==============================================================\n\n");
 
     if (content->count == 0) {
-        printf("  (Directorio vacio)\n\n");
+        printf("  (Empty directory)\n\n");
     } else {
         for (size_t i = 0; i < content->count; i++) {
             if (selected_index >= 0 && i == (size_t)selected_index) {
@@ -59,7 +59,7 @@ void fs_print_directory_content(AppState* state, const FSDirectoryContent* conte
     }
 
     printf("\n--------------------------------------------------------------\n");
-    printf(" Usa W/S o Flechas para moverte | ESC para salir\n");
+    printf(" Use W/S or Arrow keys to move | ESC to exit\n");
     printf("==============================================================\n");
 
     printf("%s", app_state_footer_text(state));
