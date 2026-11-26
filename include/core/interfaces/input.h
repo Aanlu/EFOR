@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 typedef enum{
     KEY_ACTION_NONE,
     KEY_ACTION_UP,
@@ -11,7 +13,8 @@ typedef enum{
     KEY_ACTION_COPY,
     KEY_ACTION_TEXT,
     KEY_ACTION_BACKSPACE,
-    KEY_ACTION_RESIZE
+    KEY_ACTION_RESIZE,
+    KEY_ACTION_ERROR
 } KeyAction;
 typedef struct InputEvent{
     KeyAction action;
@@ -21,5 +24,5 @@ typedef struct InputEvent{
 InputEvent input_get_action(void);
 
 void platform_clear_screen(void);
-void platform_input_init(void);
+bool platform_input_init(void);
 void platform_input_shutdown(void);

@@ -18,6 +18,7 @@ void init_app_state(AppState* state) {
     state->buffer_len = 0;
     memset(state->status_message, 0, sizeof(state->status_message));
     state->status_is_error = false;
+    state->input_failed = false;
 }
 
 void app_state_set_mode(AppState* state, AppStateMode new_mode) {

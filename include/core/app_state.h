@@ -24,6 +24,7 @@ typedef struct AppState{
     bool needs_reload;
     bool needs_sync;
 
+
     AppStateMode current_mode;
     char command_buffer[MAX_BUFFER_LENGTH];
     size_t buffer_len;
@@ -31,6 +32,7 @@ typedef struct AppState{
     char pending_cmd[MAX_BUFFER_LENGTH];
     char status_message[MAX_BUFFER_LENGTH];
     bool status_is_error;
+    bool input_failed;
 } AppState;
 
 void init_app_state(AppState* state);

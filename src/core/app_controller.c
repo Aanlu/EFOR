@@ -24,6 +24,13 @@ bool handle_input(AppState* state, const FSDirectoryContent* content) {
     InputEvent event = input_get_action();
     if (event.action == KEY_ACTION_NONE) return false;
 
+    if (event.action == KEY_ACTION_ERROR) {
+        state->status_is_error = true;
+        state->running = 0;
+        state->input_failed = true;
+        return false;
+    }
+
     if (event.action == KEY_ACTION_RESIZE) return true;
 
     switch(state->current_mode) {

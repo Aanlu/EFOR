@@ -53,3 +53,34 @@ add_test(NAME CommandParserTest COMMAND $<TARGET_FILE:efor_command_parser_tests>
 add_executable(efor_app_state_tests tests/test_app_state.c src/core/app_state.c)
 target_include_directories(efor_app_state_tests PRIVATE include)
 add_test(NAME AppStateTest COMMAND $<TARGET_FILE:efor_app_state_tests>)
+
+if(WIN32)
+    add_executable(efor_main_lifecycle_tests
+        tests/test_main_lifecycle.c
+        src/core/app_state.c
+    )
+    target_include_directories(efor_main_lifecycle_tests PRIVATE include)
+    add_test(NAME MainLifecycleTest COMMAND $<TARGET_FILE:efor_main_lifecycle_tests>)
+
+    add_executable(efor_input_error_tests
+        tests/test_input_error.c
+        src/core/app_state.c
+        src/core/app_controller.c
+        src/core/command_executor.c
+        src/core/path_utils.c
+        src/core/logger.c
+        src/parsers/command_parser.c
+        src/platform/windows/fs_reader_win.c
+        src/platform/windows/fs_win.c
+    )
+    target_include_directories(efor_input_error_tests PRIVATE include)
+    add_test(NAME InputErrorControllerTest COMMAND $<TARGET_FILE:efor_input_error_tests>)
+
+    add_test(
+        NAME RedirectedInputTest
+        COMMAND ${CMAKE_COMMAND}
+            "-DEFOR_EXECUTABLE=$<TARGET_FILE:efor>"
+            "-DTEST_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_redirected_input.cmake"
+    )
+endif()

@@ -7,12 +7,14 @@
 static HANDLE input_handle;
 static DWORD original_console_mode;
 
-void platform_input_init(void) {
+bool platform_input_init(void) {
     input_handle = GetStdHandle(STD_INPUT_HANDLE);
-    GetConsoleMode(input_handle, &original_console_mode);
-    
+    if (!GetConsoleMode(input_handle, &original_console_mode)) return false;
+
     DWORD raw_mode = original_console_mode & ~(ENABLE_PROCESSED_INPUT | ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT);
-    SetConsoleMode(input_handle, raw_mode);
+    if (!SetConsoleMode(input_handle, raw_mode)) return false;
+
+    return true;
 }
 
 void platform_input_shutdown(void) {
@@ -24,7 +26,16 @@ InputEvent input_get_action(void) {
     DWORD events_read = 0;
 
     while (true) {
-        ReadConsoleInput(input_handle, &input_record, 1, &events_read);
+        if (!ReadConsoleInput(input_handle, &input_record, 1, &events_read)){
+            DWORD error_code = GetLastError();
+            fprintf(stderr, "ReadConsoleInput failed:  %lu\n", (unsigned long)error_code);
+            return (InputEvent){ .action = KEY_ACTION_ERROR, .character = '\0' };
+        }
+
+        if (events_read == 0) {
+            fprintf(stderr, "ReadConsoleInput returned no events.\n");
+            return (InputEvent){ .action = KEY_ACTION_ERROR, .character = '\0' };
+        }
 
         if (input_record.EventType == WINDOW_BUFFER_SIZE_EVENT) {
             return (InputEvent){ .action = KEY_ACTION_RESIZE, .character = '\0' };
