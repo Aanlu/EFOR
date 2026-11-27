@@ -11,7 +11,7 @@ bool platform_input_init(void) {
     input_handle = GetStdHandle(STD_INPUT_HANDLE);
     if (!GetConsoleMode(input_handle, &original_console_mode)) return false;
 
-    DWORD raw_mode = original_console_mode & ~(ENABLE_PROCESSED_INPUT | ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT);
+    DWORD raw_mode = (original_console_mode & ~(ENABLE_PROCESSED_INPUT | ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT)) | ENABLE_WINDOW_INPUT;
     if (!SetConsoleMode(input_handle, raw_mode)) return false;
 
     return true;
